@@ -1,4 +1,5 @@
 pragma solidity ^0.4.2;
+import "./Config.sol";
 contract TTVIPManage {
     address owner;
     //配置合约地址
@@ -16,6 +17,11 @@ contract TTVIPManage {
 
     //回滚
     function rollback(string con_name,string ver_num)public onlyOwner returns(bool){
+
+    }
+
+    //创建数据合约实例
+    function  createDataContracts(){
 
     }
 }
