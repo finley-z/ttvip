@@ -10,20 +10,12 @@ contract CustomerContract {
         uint64 timestamp;        //交易时间
         string remark;           //备注
     }
+
     //交易记录
     Transaction[] public transactions;
+
     //交易序号
     mapping (address => uint64) public tnounces;
-
-    //交易事件
-    event Transformed(address indexed from, address indexed to, uint indexed txHash);
-
-    Content[] public contracts;
-
-    //合约的序号
-    mapping (address => uint64) public cnounces;
-    //签署事件
-    event Signed(address indexed firstParty, address indexed secondParty, uint indexed txHash);
 
     //发起交易
     function transform(address to, uint64 amount, uint160 txHash, string remark) public {

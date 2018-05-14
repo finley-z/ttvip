@@ -30,7 +30,7 @@ contract Config{
 
     }
 
-    function getCurrentVersion(){
+    function getCurrentVersion(string name){
 
     }
 

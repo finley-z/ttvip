@@ -23,6 +23,8 @@ contract CustomerContract {
     Content[] public contracts;
     //合约的序号
     mapping (address => uint64) public cnounces;
+
+
     //签署事件
     event Signed(address indexed firstParty, address indexed secondParty, uint indexed txHash);
 

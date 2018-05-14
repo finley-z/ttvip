@@ -1,10 +1,10 @@
 pragma solidity ^0.4.2;
 
-contract TTVIPUpgradeable{
+contract Upgradeable{
     address owner;
     bool public paused = false;
 
-    function TTVIPUpgradeable() internal {
+    function Upgradeable() internal {
         owner = msg.sender;
     }
 
