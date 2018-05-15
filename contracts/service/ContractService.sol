@@ -6,9 +6,15 @@ import "./Configurable.sol";
 contract ContractService is Configurable{
     CustomerContract data;
 
+    modifier onlyAdmin() {
+        require(config.isAdmin(msg.sender));
+        _;
+    }
+
     //构造函数
     function ContractService()public{
         address addr=config.getCurrentVersion("CustomerContract");
+        require(addr!=address(0));
         data=CustomerContract(addr);
     }
 

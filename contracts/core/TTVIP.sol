@@ -1,5 +1,4 @@
 pragma solidity ^0.4.2;
-pragma experimental ABIEncoderV2;
 
 import "../lifecycle/SmartContractFactory.sol";
 import "../service/AccountService.sol";
@@ -26,7 +25,7 @@ contract TTVIP is Upgradeable{
 
     //签署合约
     function signContract(address secondParty,uint8 shareProfit,uint8 expireYear,uint160 txHash,string remark) public{
-
+        contractService.signContract(msg.sender,secondParty,shareProfit,expireYear,txHash,timestamp,state,remark);
     }
 
     //确认合约
@@ -48,6 +47,7 @@ contract TTVIP is Upgradeable{
     function transform(address to,uint64 amount,uint160 txHash,string remark) public whenNotPaused{
 
     }
+
     //给账户加款
     function addFund(address to,uint160 txHash,uint64 amount,string remark) public whenNotPaused() onlyAdmin() returns(address touser,uint balance){
 

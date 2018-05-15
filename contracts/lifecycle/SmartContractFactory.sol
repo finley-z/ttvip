@@ -13,6 +13,9 @@ contract SmartContractFactory{
 
     function getAccountService() public returns (AccountService service){
         address addr=config.getCurrentVersion("AccountService");
+        //校验地址的正确性
+        require(addr!=address(0));
+
         service =AccountService(addr);
         service.setConfigInstance(config);
         return service;
@@ -20,17 +23,19 @@ contract SmartContractFactory{
 
     function getContractService() public returns (ContractService service){
         address addr=config.getCurrentVersion("ContractService");
-        service =ContractService(addr);
-        service.setConfigInstance(config);
-    return service;
-    }
+        require(addr!=address(0));
 
-    function getTransactionService() public returns (TransactionService service){
-        address addr=config.getCurrentVersion("AccountService");
-        service =TransactionService(addr);
+        service =ContractService(addr);
         service.setConfigInstance(config);
         return service;
     }
 
+    function getTransactionService() public returns (TransactionService service){
+        address addr=config.getCurrentVersion("AccountService");
+        require(addr!=address(0));
 
+        service =TransactionService(addr);
+        service.setConfigInstance(config);
+        return service;
+    }
 }

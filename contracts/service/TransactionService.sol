@@ -7,19 +7,27 @@ contract TransactionService is Configurable{
     CustomerTransaction data;
     CustomerAccount account;
 
+    modifier onlyAdmin() {
+        require(config.isAdmin(msg.sender));
+        _;
+    }
+
     //构造函数
     function ContractService()public{
         address addr_tx=config.getCurrentVersion("CustomerTransaction");
+        require(addr_tx!=address(0));
         data=CustomerTransaction(addr_tx);
         address addr_acc=config.getCurrentVersion("AccountService");
+        require(addr_acc!=address(0));
         account =CustomerAccount(addr_acc);
     }
 
     //发起交易
     function transform(address from,address to, uint64 amount, uint160 txHash, string remark) public {
+        require(from!=address(0)&from!=address(to));
 
         if (amount < 0 || account.getBalance(from) < amount) {
-            return;
+            throw;
         }
         data.addRecord(msg.sender, to, amount, txHash, timestamp, remark);
         var timestamp = uint64(now);

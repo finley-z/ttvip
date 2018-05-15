@@ -24,7 +24,6 @@ contract Config{
     //管理员账户列表
     mapping(address=>bool) admins;
 
-
     function Config(){
         owner=msg.sender;
     }
@@ -39,6 +38,14 @@ contract Config{
         _;
     }
 
+    function publishNewVersion(string name,address publish_addr)public onlyAdmin returns(bool){
+        uint32 ver_num=lastVersionNum[name];
+        ver_num++;
+        lastVersionNum[name]=ver_num;
+        preVersions[name].push(Version(name,ver_num,publish_addr));
+        setCurrentVersion(name,publish_addr);
+    }
+
     function addVersion(string name,address publish_addr)public onlyAdmin returns(bool){
         uint32 ver_num=lastVersionNum[name];
         ver_num++;
@@ -46,7 +53,6 @@ contract Config{
         preVersions[name].push(Version(name,ver_num,publish_addr));
         return true;
     }
-
 
     function getVersionInfo(string name,uint32 ver_num)public onlyAdmin returns(string,uint32,address){
         Version[] memory vers=preVersions[name];
