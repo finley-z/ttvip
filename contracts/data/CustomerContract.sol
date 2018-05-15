@@ -20,59 +20,57 @@ contract CustomerContract {
         string remark;           //备注
     }
 
-    Content[] public contracts;
+    //合约内容列表
+    CustomerContract[] public contracts;
+
     //合约的序号
     mapping (address => uint64) public cnounces;
 
-
-    //签署事件
-    event Signed(address indexed firstParty, address indexed secondParty, uint indexed txHash);
+    //数据索引
+    mapping (uint160 => uint) public indexs;
 
     //签署合约
-    function signContract(address secondParty, uint8 shareProfit, uint8 expireYear, uint160 txHash, string remark) public {
-        var timestamp = uint64(now);
-        Content memory con = Content(msg.sender, secondParty, shareProfit, expireYear, txHash, timestamp, remark);
+    function addContract(address firstParty,address secondParty, uint32 shareProfit, uint32 expireYear, uint160 txHash, uint64 timestamp,ContractState state,string remark) public {
+        CustomerContract memory con = CustomerContract(firstParty, secondParty, shareProfit, expireYear, txHash, timestamp, state,remark);
+        uint index=contracts.length;
+        indexs[txHash]=index;
         contracts.push(con);
-        // contents[msg.sender].push(con);
-        // contentLength++;
         cnounces[msg.sender]++;
         cnounces[secondParty]++;
-        Signed(msg.sender, secondParty, timestamp);
     }
 
-    //获取合同内容列表
-    function getContractsInternal(address useraddress) constant internal returns (uint160[6][]) {
-        var length = (useraddress == admin ? contracts.length : cnounces[useraddress]);
-        uint160[6][] memory temp = new uint160[6][](length);
-        uint index = 0;
-        for (uint64 i = 0; i < contracts.length; i++) {
-            if (useraddress == admin) {
-                temp[i] = [uint160(contracts[i].firstParty), uint160(contracts[i].secondParty), contracts[i].shareProfit, contracts[i].expireYear, contracts[i].txHash, contracts[i].timestamp];
+    //更新合约状态
+    function updateContract(uint160 txHash,ContractState state)public{
+        uint index=indexs[txHash];
+        contracts[index].state=state;
+    }
+
+    //按分页获取合同内容
+    function getContractForPaging(address useraddress,uint128 start,bool isAdmin)public view  returns (address,address,uint160,uint64,uint32,uint128,uint128) {
+        // bool isAdmin=config.isAdmin(useraddress);
+        uint128 total = uint128((isAdmin? contracts.length : cnounces[useraddress]));
+        for (; start < total; start++) {
+            CustomerContract memory t = contracts[start];
+            if (isAdmin) {
+                return (t.firstParty,t.secondParty,t.txHash,t.timestamp,uint32(t.state),start,total);
             }
             else {
-                if (contracts[i].firstParty == useraddress || contracts[i].secondParty == useraddress) {
-                    temp[index] = [uint160(contracts[i].firstParty), uint160(contracts[i].secondParty), contracts[i].shareProfit, contracts[i].expireYear, contracts[i].txHash, contracts[i].timestamp];
-                    index++;
+                if (contracts[start].firstParty == useraddress || contracts[start].secondParty == useraddress) {
+                    return (t.firstParty,t.secondParty,t.txHash,t.timestamp,uint32(t.state),start,total);
                 }
             }
         }
-        return temp;
     }
 
-    //用户获取合约签署列表
-    function getContracts() public view returns (uint160[6][]) {
-        return getContractsInternal(msg.sender);
+    //根据ID查询交易记录详情
+    function getContractByTxHash(uint160 txHash) public view returns(address,address,uint32,uint32,uint160,uint64,string){
+        //校验数据是否存在
+        uint index=indexs[txHash];
+        return getContractDetail(index);
     }
 
-    //根据ID交易记录详情
-    function getConrtactDetail(uint160 txHash) public view returns(address,address,uint8,uint8,uint160,uint64,string){
-        for (uint64 i = 0; i < contracts.length; i++) {
-            Content t=contracts[i];
-            if(t.txHash==txHash){
-                return(t.firstParty,t.secondParty,t.shareProfit,t.expireYear,t.txHash,t.timestamp,t.remark);
-            }
-
-        }
-        return (0,0,0,0,0,0,"");
+    function getContractDetail(uint index) public view returns(address,address,uint32,uint32,uint160,uint64,string){
+        CustomerContract memory t=contracts[index];
+        return(t.firstParty,t.secondParty,t.shareProfit,t.expireYear,t.txHash,t.timestamp,t.remark);
     }
 }
