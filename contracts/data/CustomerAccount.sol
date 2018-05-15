@@ -14,5 +14,21 @@ contract CustomerAccount {
     //资金账户数据
     mapping (address => Account) public  accounts;
 
+    function getAccount(){
+
+    }
+
+    function register(){
+        //注意各种校验
+    }
+
+    function updateBalance(){
+
+    }
+
+    //将地址、用户名转换成bytes20
+    function getAccountList() returns(byte20[2]){
+        bytes20(msg.sender);
+    }
 
 }
