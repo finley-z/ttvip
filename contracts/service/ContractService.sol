@@ -1,53 +1,47 @@
 pragma solidity ^0.4.2;
 
-contract ContractService{
+import "../data/CustomerContract.sol";
+import "./Configurable.sol";
+
+contract ContractService is Configurable{
+    CustomerContract data;
+
+    //构造函数
+    function ContractService()public{
+        address addr=config.getCurrentVersion("CustomerContract");
+        data=CustomerContract(addr);
+    }
 
     //签署合约
-    function signContract(address secondParty, uint8 shareProfit, uint8 expireYear, uint160 txHash, string remark) public {
-        var timestamp = uint64(now);
-        Content memory con = Content(msg.sender, secondParty, shareProfit, expireYear, txHash, timestamp, remark);
-        contracts.push(con);
-        // contents[msg.sender].push(con);
-        // contentLength++;
-        cnounces[msg.sender]++;
-        cnounces[secondParty]++;
-        Signed(msg.sender, secondParty, timestamp);
+    function signContract(address firstParty,address secondParty, uint32 shareProfit, uint32 expireYear, uint160 txHash, uint64 timestamp,uint32 state,string remark) public {
+         data.addContract(firstParty, secondParty, shareProfit, expireYear, txHash, timestamp, state,remark);
+    }
+
+    //确认合约
+    function confirmContract( uint160 txHash, uint32 state) public {
+        var (firstParty,secondParty,shareProfit,expireYear,_txHash,timestamp,_state,remark)=data.getContractByTxHash(txHash);
+        if(msg.sender!=secondParty){
+            throw;
+        }else{
+            data.updateContract(txHash,state);
+        }
     }
 
     //获取合同内容列表
-    function getContractsInternal(address useraddress) constant internal returns (uint160[6][]) {
-        var length = (useraddress == admin ? contracts.length : cnounces[useraddress]);
-        uint160[6][] memory temp = new uint160[6][](length);
-        uint index = 0;
-        for (uint64 i = 0; i < contracts.length; i++) {
-            if (useraddress == admin) {
-                temp[i] = [uint160(contracts[i].firstParty), uint160(contracts[i].secondParty), contracts[i].shareProfit, contracts[i].expireYear, contracts[i].txHash, contracts[i].timestamp];
-            }
-            else {
-                if (contracts[i].firstParty == useraddress || contracts[i].secondParty == useraddress) {
-                    temp[index] = [uint160(contracts[i].firstParty), uint160(contracts[i].secondParty), contracts[i].shareProfit, contracts[i].expireYear, contracts[i].txHash, contracts[i].timestamp];
-                    index++;
-                }
-            }
+    function getContractList(address user_addr,uint128 start,uint128 rows) constant  returns (uint160[6][]) {
+        bool isAdmin=config.isAdmin(user_addr);
+        uint160[6][] memory temp = new uint160[6][](rows);
+        for (uint i = 0; i <rows; i++) {
+            var (firstParty,secondParty,txHash,timestamp,state,_start,total)=data.getContractForPaging(user_addr,start,isAdmin);
+            temp[i] = [uint160(firstParty),uint160(secondParty),txHash,timestamp,uint160(state),total];
+            start=_start;
         }
         return temp;
     }
 
-    //用户获取合约签署列表
-    function getContracts() public view returns (uint160[6][]) {
-        return getContractsInternal(msg.sender);
-    }
-
     //根据ID交易记录详情
-    function getConrtactDetail(uint160 txHash) public view returns(address,address,uint8,uint8,uint160,uint64,string){
-        for (uint64 i = 0; i < contracts.length; i++) {
-            Content t=contracts[i];
-            if(t.txHash==txHash){
-                return(t.firstParty,t.secondParty,t.shareProfit,t.expireYear,t.txHash,t.timestamp,t.remark);
-            }
-
-        }
-        return (0,0,0,0,0,0,"");
+    function getContractDetail(uint160 txHash) public view returns(address,address,uint32,uint32,uint160,uint64,uint32,string){
+        return data.getContractByTxHash(txHash);
     }
 
 }

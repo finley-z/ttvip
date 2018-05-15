@@ -2,16 +2,21 @@ pragma solidity ^0.4.2;
 pragma experimental ABIEncoderV2;
 
 import "../lifecycle/SmartContractFactory.sol";
-import "../lifecycle/AccountService.sol";
-import "../lifecycle/ContractService.sol";
-import "../lifecycle/TransactionService.sol";
-import "../lifecycle/TTVIPUpgradeable.sol";
+import "../service/AccountService.sol";
+import "../service/ContractService.sol";
+import "../service/TransactionService.sol";
+import "../lifecycle/Upgradeable.sol";
 
 contract TTVIP is Upgradeable{
     SmartContractFactory factory;
     AccountService accountService;
     ContractService contractService;
     TransactionService transactionService;
+
+    function TTVIP(address config_addr){
+        factory=new SmartContractFactory(config_addr);
+        refresh();
+    }
 
     //签署事件
     event Signed(address indexed firstParty, address indexed secondParty, uint indexed txHash);
@@ -25,12 +30,12 @@ contract TTVIP is Upgradeable{
     }
 
     //确认合约
-    function confirmContract(){
+    function confirmContract()public{
 
     }
 
     //用户获取合约签署列表
-    function getContracts()public  view returns(uint160[6][]) {
+    function getContracts()public view returns(uint160[6][]) {
 
     }
 
@@ -63,9 +68,9 @@ contract TTVIP is Upgradeable{
 
     }
 
-
     function refresh() public{
-
-
+        accountService=factory.getAccountService();
+        contractService=factory.getContractService();
+        transactionService=factory.getTransactionService();
     }
 }

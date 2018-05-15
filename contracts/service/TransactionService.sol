@@ -1,76 +1,53 @@
 pragma solidity ^0.4.2;
+import "./Configurable.sol";
+import "../data/CustomerAccount.sol";
+import "../data/CustomerTransaction.sol";
 
-contract TransactionService{
+contract TransactionService is Configurable{
+    CustomerTransaction data;
+    CustomerAccount account;
+
+    //构造函数
+    function ContractService()public{
+        address addr_tx=config.getCurrentVersion("CustomerTransaction");
+        data=CustomerTransaction(addr_tx);
+        address addr_acc=config.getCurrentVersion("AccountService");
+        account =CustomerAccount(addr_acc);
+    }
 
     //发起交易
-    function transform(address to, uint64 amount, uint160 txHash, string remark) public {
-        if (amount < 0 || accounts[msg.sender].balance < amount) {
+    function transform(address from,address to, uint64 amount, uint160 txHash, string remark) public {
+
+        if (amount < 0 || account.getBalance(from) < amount) {
             return;
         }
+        data.addRecord(msg.sender, to, amount, txHash, timestamp, remark);
         var timestamp = uint64(now);
-        accounts[msg.sender].balance -= amount;
-        accounts[to].balance += amount;
-        tnounces[msg.sender]++;
-        tnounces[to]++;
-        this.takerecord(msg.sender, to, amount, txHash, timestamp, remark);
+        account.updateBalance(from,-amount);
+        account.updateBalance(to,amount);
     }
+
     //给账户加款
     function addFund(address to, uint160 txHash, uint64 amount, string remark) public onlyAdmin() returns (address touser, uint balance){
         var timestamp = uint64(now);
-        accounts[to].balance += amount;
-        this.takerecord(msg.sender, to, amount, txHash, timestamp, remark);
-        tnounces[msg.sender]++;
-        tnounces[to]++;
-        Transformed(msg.sender, to, timestamp);
-        return (to, accounts[to].balance);
+        data.addRecord(msg.sender, to, amount, txHash, timestamp, remark);
+        account.updateBalance(to,amount);
     }
 
-    //记录交易内容
-    function takerecord(address from, address to, uint64 amount, uint160 txHash, uint64 timestamp, string remark){
-        transactions.push(Transaction(txHash, from, to, amount, timestamp, remark));
-    }
-
-    //获取合同内容列表
-    function getTransactionsInternal(address from, address to) constant internal returns (uint160[5][]) {
-        var length = (from == admin ? transactions.length : tnounces[from]);
-        uint160[5][] memory temp = new uint160[5][](length);
-        uint64 index = 0;
-        for (uint64 i = 0; i < transactions.length; i++) {
-            Transaction t = transactions[i];
-            if (from == admin) {
-                if (to != 0 && t.to != to) {
-                    continue;
-                }
-                temp[index] = [t.txHash, uint160(t.from), uint160(t.to), t.amount, t.timestamp];
-                index++;
-            }
-            else {
-                if (t.from == from || t.to == from) {
-                    temp[index] = [t.txHash, uint160(t.from), uint160(t.to), t.amount, t.timestamp];
-                    index++;
-                }
-            }
-
+    //根据发送人或者接收人查看交易记录
+    function getTransactions(address from,address to) public view returns (uint160[5][]){
+        bool isAdmin=config.isAdmin(user_addr);
+        uint160[5][] memory temp = new uint160[5][](rows);
+        for (uint i = 0; i <rows; i++) {
+            var (txHash,_from,_to,amount,timestamp,_start,total)=data.getTransactionsForPaging(from,to,start,isAdmin);
+            temp[i] = [txHash,uint160(_from),uint160(_to),amount,timestamp];
+            start=_start;
         }
         return temp;
     }
 
-    //根据发送人或者接收人查看交易记录
-    function getTransactions(address to) public view returns (uint160[5][]){
-        return getTransactionsInternal(msg.sender, to);
-    }
-
     //根据ID交易记录详情
     function getTransactionDetail(uint160 txHash) public view returns (uint160, address, address, uint64, uint64, string){
-        for (uint64 i = 0; i < transactions.length; i++) {
-            Transaction t = transactions[i];
-            if (t.txHash == txHash) {
-                return (t.txHash, t.from, t.to, t.amount, t.timestamp, t.remark);
-            }
-
-        }
-        return (0, 0, 0, 0, 0, "");
+         return data.getTransactionByTxHash(txHash);
     }
-
-
 }
