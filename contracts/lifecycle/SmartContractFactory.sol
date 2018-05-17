@@ -6,36 +6,54 @@ import "../service/TransactionService.sol";
 
 contract SmartContractFactory{
     Config config;
+    address config_address;
 
-    function SmartContractFactory(address config_addr){
-        config=Config(config_addr);
+    function SmartContractFactory(address _config_address)public payable{
+        config=Config(_config_address);
+        config_address=_config_address;
     }
 
     function getAccountService() public returns (AccountService service){
         address addr=config.getCurrentVersion("AccountService");
         //校验地址的正确性
-        require(addr!=address(0));
+        if(addr!=address(0)){
+            service =AccountService(addr);
+            service.init(config_address);
+        }else{
+            service =new AccountService();
+            service.init(config_address);
+            address publish_addr=address(service);
+            config.publishNewVersion("AccountService", publish_addr);
+        }
 
-        service =AccountService(addr);
-        service.setConfigInstance(config);
         return service;
     }
 
     function getContractService() public returns (ContractService service){
         address addr=config.getCurrentVersion("ContractService");
-        require(addr!=address(0));
-
-        service =ContractService(addr);
-        service.setConfigInstance(config);
+        if(addr!=address(0)){
+            service =ContractService(addr);
+            service.init(config_address);
+        }else{
+            service =new ContractService();
+            service.init(config_address);
+            address publish_addr=address(service);
+            config.publishNewVersion("ContractService", publish_addr);
+        }
         return service;
     }
 
     function getTransactionService() public returns (TransactionService service){
-        address addr=config.getCurrentVersion("AccountService");
-        require(addr!=address(0));
-
-        service =TransactionService(addr);
-        service.setConfigInstance(config);
+        address addr=config.getCurrentVersion("TransactionService");
+        if(addr!=address(0)){
+            service =TransactionService(addr);
+            service.init(config_address);
+        }else{
+            service =new TransactionService();
+            service.init(config_address);
+            address publish_addr=address(service);
+            config.publishNewVersion("TransactionService", publish_addr);
+        }
         return service;
     }
 }

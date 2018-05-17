@@ -3,13 +3,11 @@ import "./Config.sol";
 import "./TTVIP.sol";
 
 contract TTVIPManage {
-    //配置合约地址
-    address config_addr;
 
     TTVIP ttvip;
     Config config;
 
-    function TTVIPManage(address config_addr,tt_addr){
+    function TTVIPManage(address config_addr,address tt_addr) public{
         ttvip=TTVIP(config_addr);
         config=Config(tt_addr);
     }
@@ -21,7 +19,7 @@ contract TTVIPManage {
     }
 
     //发布新版本
-    function publish(string con_name,string ver_num,address pub_addr)public onlyAdmin returns(bool){
+    function publish(string con_name,string ver_num,address pub_addr)public  returns(bool){
         config.publishNewVersion(con_name,pub_addr);
         pause();
         //更新发布地址，调用TTIVP的refresh更新合约实例
@@ -30,8 +28,9 @@ contract TTVIPManage {
     }
 
     //回滚
-    function rollback(string con_name,string ver_num)public onlyAdmin returns(bool){
-        config.setCurrentVersion(con_name,pub_addr);
+    function rollback(string con_name,uint32 ver_num)public  returns(bool){
+        var(name,ver,addr)= config.getVersionInfo(con_name,ver_num);
+        config.setCurrentVersion(con_name,addr);
         pause();
         //更新发布地址，调用TTIVP的refresh更新合约实例
         ttvip.refresh();
@@ -39,13 +38,14 @@ contract TTVIPManage {
     }
 
 
-    function pause() internal onlyAdmin{
+    function pause() internal {
+
         AccountService(config.getCurrentVersion("AccountService")).pause();
         ContractService(config.getCurrentVersion("ContractService")).pause();
         TransactionService(config.getCurrentVersion("TransactionService")).pause();
     }
 
-    function unpause()internal onlyAdmin{
+    function unpause()internal {
         AccountService(config.getCurrentVersion("AccountService")).unpause();
         ContractService(config.getCurrentVersion("ContractService")).unpause();
         TransactionService(config.getCurrentVersion("TransactionService")).unpause();

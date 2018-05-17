@@ -4,12 +4,12 @@ contract Config{
     address owner;
 
     struct Version{
-        //合约实例名称
-        string  name;
-        //版本
-        uint32  ver;
-        //部署地址
-        address publish_addr;
+    //合约实例名称
+    string  name;
+    //版本
+    uint32  ver;
+    //部署地址
+    address publish_addr;
     }
 
     //合约历史版本
@@ -26,6 +26,7 @@ contract Config{
 
     function Config(){
         owner=msg.sender;
+        setAdmin(msg.sender,true);
     }
 
     modifier onlyOwner() {
@@ -38,7 +39,7 @@ contract Config{
         _;
     }
 
-    function publishNewVersion(string name,address publish_addr)public onlyAdmin returns(bool){
+    function publishNewVersion(string name,address publish_addr)public   returns(bool){
         uint32 ver_num=lastVersionNum[name];
         ver_num++;
         lastVersionNum[name]=ver_num;
@@ -46,7 +47,7 @@ contract Config{
         setCurrentVersion(name,publish_addr);
     }
 
-    function addVersion(string name,address publish_addr)public onlyAdmin returns(bool){
+    function addVersion(string name,address publish_addr)public  returns(bool){
         uint32 ver_num=lastVersionNum[name];
         ver_num++;
         lastVersionNum[name]=ver_num;
@@ -54,7 +55,7 @@ contract Config{
         return true;
     }
 
-    function getVersionInfo(string name,uint32 ver_num)public onlyAdmin returns(string,uint32,address){
+    function getVersionInfo(string name,uint32 ver_num)public view  returns(string,uint32,address){
         Version[] memory vers=preVersions[name];
         for(uint i=0;i<vers.length;i++){
             Version memory v=vers[i];
@@ -64,20 +65,20 @@ contract Config{
         }
     }
 
-    function setCurrentVersion(string name,address pub_addr)public onlyAdmin returns(bool){
+    function setCurrentVersion(string name,address pub_addr)public  returns(bool){
         curVersion[name]=pub_addr;
         return true;
     }
 
-    function getCurrentVersion(string name)public onlyAdmin returns(address){
+    function getCurrentVersion(string name)public view returns(address){
         return curVersion[name];
     }
 
-    function setAdmin(address addr,bool isAdmin)public onlyOwner{
-         admins[addr]=isAdmin;
+    function setAdmin(address addr,bool isAdmin)public  onlyOwner{
+        admins[addr]=isAdmin;
     }
 
-    function isAdmin(address addr)public returns(bool){
+    function isAdmin(address addr)public view returns(bool){
         return admins[addr];
     }
 

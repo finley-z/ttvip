@@ -1,0 +1,192 @@
+{
+  "contractName": "Configurable",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "config",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5060e98061001f6000396000f300608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806379502c55146044575b600080fd5b348015604f57600080fd5b5060566098565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a723058209eb5da432ccb4df82690c7591fdeac8bc4147c4549256cfe9b437cd867b586940029",
+  "deployedBytecode": "0x608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806379502c55146044575b600080fd5b348015604f57600080fd5b5060566098565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a723058209eb5da432ccb4df82690c7591fdeac8bc4147c4549256cfe9b437cd867b586940029",
+  "sourceMap": "55:54:10:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;55:54:10;;;;;;;",
+  "deployedSourceMap": "55:54:10:-;;;;;;;;;;;;;;;;;;;;;;;;83:20;;8:9:-1;5:2;;;30:1;27;20:12;5:2;83:20:10;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o",
+  "source": "pragma solidity ^0.4.2;\r\nimport \"../core/Config.sol\";\r\ncontract Configurable{\r\n    Config public config;\r\n\r\n}",
+  "sourcePath": "D:\\dapps\\TTVIP\\contracts\\service\\Configurable.sol",
+  "ast": {
+    "absolutePath": "/D/dapps/TTVIP/contracts/service/Configurable.sol",
+    "exportedSymbols": {
+      "Configurable": [
+        2090
+      ]
+    },
+    "id": 2091,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2086,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:10"
+      },
+      {
+        "absolutePath": "/D/dapps/TTVIP/contracts/core/Config.sol",
+        "file": "../core/Config.sol",
+        "id": 2087,
+        "nodeType": "ImportDirective",
+        "scope": 2091,
+        "sourceUnit": 315,
+        "src": "25:28:10",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2090,
+        "linearizedBaseContracts": [
+          2090
+        ],
+        "name": "Configurable",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 2089,
+            "name": "config",
+            "nodeType": "VariableDeclaration",
+            "scope": 2090,
+            "src": "83:20:10",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_Config_$314",
+              "typeString": "contract Config"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 2088,
+              "name": "Config",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 314,
+              "src": "83:6:10",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Config_$314",
+                "typeString": "contract Config"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2091,
+        "src": "55:54:10"
+      }
+    ],
+    "src": "0:109:10"
+  },
+  "legacyAST": {
+    "absolutePath": "/D/dapps/TTVIP/contracts/service/Configurable.sol",
+    "exportedSymbols": {
+      "Configurable": [
+        2090
+      ]
+    },
+    "id": 2091,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2086,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:10"
+      },
+      {
+        "absolutePath": "/D/dapps/TTVIP/contracts/core/Config.sol",
+        "file": "../core/Config.sol",
+        "id": 2087,
+        "nodeType": "ImportDirective",
+        "scope": 2091,
+        "sourceUnit": 315,
+        "src": "25:28:10",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2090,
+        "linearizedBaseContracts": [
+          2090
+        ],
+        "name": "Configurable",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 2089,
+            "name": "config",
+            "nodeType": "VariableDeclaration",
+            "scope": 2090,
+            "src": "83:20:10",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_Config_$314",
+              "typeString": "contract Config"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 2088,
+              "name": "Config",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 314,
+              "src": "83:6:10",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_Config_$314",
+                "typeString": "contract Config"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2091,
+        "src": "55:54:10"
+      }
+    ],
+    "src": "0:109:10"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.23+commit.124ca40d.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "2.0.0",
+  "updatedAt": "2018-05-17T09:38:42.647Z"
+}

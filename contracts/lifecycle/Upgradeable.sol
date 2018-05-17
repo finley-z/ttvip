@@ -23,7 +23,7 @@ contract Upgradeable{
         _;
     }
 
-    function pause() external onlyOwner whenNotPaused {
+    function pause() public onlyOwner whenNotPaused {
         paused = true;
     }
 
